@@ -1,0 +1,15 @@
+Multiple Rabbit for Spring Boot Starter
+Copyright (c) 2020 Yookue Ltd. All rights reserved.
+https://yookue.com
+
+If you want to custom a delayed exchange, you can configure as follows:
+
+spring:
+    multiple-rabbit:
+        primary:
+            delayed-exchange:
+                enabled: true
+                name: 'delayed-exchange'
+                type: direct
+                durable: true
+                auto-delete: true
