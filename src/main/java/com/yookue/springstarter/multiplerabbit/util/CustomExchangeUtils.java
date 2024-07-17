@@ -19,8 +19,8 @@ package com.yookue.springstarter.multiplerabbit.util;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.CustomExchange;

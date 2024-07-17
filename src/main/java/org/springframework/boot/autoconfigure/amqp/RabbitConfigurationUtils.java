@@ -17,8 +17,9 @@
 package org.springframework.boot.autoconfigure.amqp;
 
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.amqp.rabbit.config.ContainerCustomizer;
 import org.springframework.amqp.rabbit.config.DirectRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
@@ -30,6 +31,7 @@ import org.springframework.amqp.rabbit.listener.DirectMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.retry.MessageRecoverer;
 import org.springframework.amqp.support.converter.MessageConverter;
+import org.springframework.boot.ssl.SslBundles;
 import org.springframework.core.io.ResourceLoader;
 import com.rabbitmq.client.impl.CredentialsProvider;
 import com.rabbitmq.client.impl.CredentialsRefreshService;
@@ -45,18 +47,25 @@ import lombok.NonNull;
 @SuppressWarnings({"unused", "BooleanMethodIsAlwaysInverted", "UnusedReturnValue"})
 public abstract class RabbitConfigurationUtils extends RabbitAutoConfiguration {
     @Nonnull
-    public static RabbitConnectionFactoryBeanConfigurer rabbitConnectionFactoryBeanConfigurer(@NonNull RabbitProperties properties, @NonNull ResourceLoader loader, @Nullable CredentialsProvider credentialsProvider, @Nullable CredentialsRefreshService refreshService) {
-        return new RabbitConnectionFactoryCreator().rabbitConnectionFactoryBeanConfigurer(properties, loader, SingletonObjectProvider.ofNullable(credentialsProvider), SingletonObjectProvider.ofNullable(refreshService));
+    public static RabbitConnectionDetails rabbitConnectionDetails(@NonNull RabbitProperties properties) {
+        return new PropertiesRabbitConnectionDetails(properties);
     }
 
     @Nonnull
-    public static CachingConnectionFactoryConfigurer cachingConnectionFactoryConfigurer(@NonNull RabbitProperties properties, @Nullable ConnectionNameStrategy strategy) {
-        return new RabbitConnectionFactoryCreator().rabbitConnectionFactoryConfigurer(properties, SingletonObjectProvider.ofNullable(strategy));
+    public static RabbitConnectionFactoryBeanConfigurer rabbitConnectionFactoryBeanConfigurer(@NonNull RabbitProperties properties, @NonNull ResourceLoader loader, @Nullable RabbitConnectionDetails details, @Nullable CredentialsProvider credentials, @Nullable CredentialsRefreshService refresh, @Nullable SslBundles bundles) {
+        RabbitConnectionDetails alias = ObjectUtils.defaultIfNull(details, rabbitConnectionDetails(properties));
+        return new RabbitConnectionFactoryCreator(properties).rabbitConnectionFactoryBeanConfigurer(loader, alias, SingletonObjectProvider.ofNullable(credentials), SingletonObjectProvider.ofNullable(refresh), SingletonObjectProvider.ofNullable(bundles));
+    }
+
+    @Nonnull
+    public static CachingConnectionFactoryConfigurer cachingConnectionFactoryConfigurer(@NonNull RabbitProperties properties, @Nullable RabbitConnectionDetails details, @Nullable ConnectionNameStrategy strategy) {
+        RabbitConnectionDetails alias = ObjectUtils.defaultIfNull(details, rabbitConnectionDetails(properties));
+        return new RabbitConnectionFactoryCreator(properties).rabbitConnectionFactoryConfigurer(alias, SingletonObjectProvider.ofNullable(strategy));
     }
 
     @NonNull
-    public static CachingConnectionFactory cachingConnectionFactory(@NonNull RabbitConnectionFactoryBeanConfigurer rabbitFactoryConfigurer, @NonNull CachingConnectionFactoryConfigurer cachingFactoryConfigurer, @Nullable ConnectionFactoryCustomizer customizer) throws Exception {
-        return new RabbitConnectionFactoryCreator().rabbitConnectionFactory(rabbitFactoryConfigurer, cachingFactoryConfigurer, SingletonObjectProvider.ofNullable(customizer));
+    public static CachingConnectionFactory cachingConnectionFactory(@NonNull RabbitProperties properties, @NonNull RabbitConnectionFactoryBeanConfigurer rabbitConfigurer, @NonNull CachingConnectionFactoryConfigurer cachingConfigurer, @Nullable ConnectionFactoryCustomizer customizer) throws Exception {
+        return new RabbitConnectionFactoryCreator(properties).rabbitConnectionFactory(rabbitConfigurer, cachingConfigurer, SingletonObjectProvider.ofNullable(customizer));
     }
 
     @NonNull
@@ -65,8 +74,8 @@ public abstract class RabbitConfigurationUtils extends RabbitAutoConfiguration {
     }
 
     @NonNull
-    public static RabbitTemplate rabbitTemplate(@NonNull RabbitTemplateConfigurer configurer, @NonNull ConnectionFactory factory) {
-        return new RabbitTemplateConfiguration().rabbitTemplate(configurer, factory);
+    public static RabbitTemplate rabbitTemplate(@NonNull RabbitTemplateConfigurer configurer, @NonNull ConnectionFactory factory, @Nullable RabbitTemplateCustomizer customizer) {
+        return new RabbitTemplateConfiguration().rabbitTemplate(configurer, factory, SingletonObjectProvider.ofNullable(customizer));
     }
 
     @NonNull

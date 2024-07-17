@@ -17,8 +17,8 @@
 package com.yookue.springstarter.multiplerabbit.config;
 
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.CustomExchange;
@@ -37,14 +37,17 @@ import org.springframework.boot.autoconfigure.amqp.CachingConnectionFactoryConfi
 import org.springframework.boot.autoconfigure.amqp.ConnectionFactoryCustomizer;
 import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
 import org.springframework.boot.autoconfigure.amqp.RabbitConfigurationUtils;
+import org.springframework.boot.autoconfigure.amqp.RabbitConnectionDetails;
 import org.springframework.boot.autoconfigure.amqp.RabbitConnectionFactoryBeanConfigurer;
 import org.springframework.boot.autoconfigure.amqp.RabbitRetryTemplateCustomizer;
 import org.springframework.boot.autoconfigure.amqp.RabbitTemplateConfigurer;
+import org.springframework.boot.autoconfigure.amqp.RabbitTemplateCustomizer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.ssl.SslBundles;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
@@ -73,8 +76,10 @@ import lombok.NonNull;
 public class SecondaryRabbitAutoConfiguration {
     public static final String PROPERTIES_PREFIX = "spring.multiple-rabbit.secondary";    // $NON-NLS-1$
     public static final String RABBIT_PROPERTIES = "secondaryRabbitProperties";    // $NON-NLS-1$
+    public static final String CONNECTION_DETAILS = "secondaryRabbitConnectionDetails";    // $NON-NLS-1$
     public static final String CREDENTIALS_PROVIDER = "secondaryRabbitCredentialsProvider";    // $NON-NLS-1$
-    public static final String CREDENTIALS_REFRESH_SERVICE = "secondaryRabbitCredentialsRefreshService";    // $NON-NLS-1$
+    public static final String CREDENTIALS_REFRESH_SERVICE = "secondaryRabbitCredentialsRefreshService";    // $NON-NLS-1$   // $NON-NLS-1$
+    public static final String SSL_BUNDLES = "secondaryRabbitSslBundles";    // $NON-NLS-1$
     public static final String CONNECTION_FACTORY_BEAN_CONFIGURER = "secondaryRabbitConnectionFactoryBeanConfigurer";
     public static final String CONNECTION_NAME_STRATEGY = "secondaryRabbitConnectionNameStrategy";    // $NON-NLS-1$
     public static final String CACHING_CONNECTION_FACTORY_CONFIGURER = "secondaryRabbitCachingConnectionFactoryConfigurer";    // $NON-NLS-1$
@@ -83,6 +88,7 @@ public class SecondaryRabbitAutoConfiguration {
     public static final String MESSAGE_CONVERTER = "secondaryRabbitMessageConverter";    // $NON-NLS-1$
     public static final String RETRY_TEMPLATE_CUSTOMIZER = "secondaryRabbitRetryTemplateCustomizer";    // $NON-NLS-1$
     public static final String RABBIT_TEMPLATE_CONFIGURER = "secondaryRabbitTemplateConfigurer";    // $NON-NLS-1$
+    public static final String RABBIT_TEMPLATE_CUSTOMIZER = "primaryRabbitTemplateCustomizer";    // $NON-NLS-1$
     public static final String RABBIT_TEMPLATE = "secondaryRabbitTemplate";    // $NON-NLS-1$
     public static final String RABBIT_MESSAGING_TEMPLATE = "secondaryRabbitMessagingTemplate";    // $NON-NLS-1$
     public static final String AMQP_ADMIN = "secondaryRabbitAmqpAdmin";    // $NON-NLS-1$
@@ -95,30 +101,41 @@ public class SecondaryRabbitAutoConfiguration {
         return new MultipleRabbitProperties();
     }
 
+    @Bean(name = CONNECTION_DETAILS)
+    @ConditionalOnBean(name = RABBIT_PROPERTIES)
+    @ConditionalOnMissingBean(name = CONNECTION_DETAILS)
+    public RabbitConnectionDetails rabbitConnectionDetails(@Qualifier(value = RABBIT_PROPERTIES) @NonNull MultipleRabbitProperties properties) {
+        return RabbitConfigurationUtils.rabbitConnectionDetails(properties);
+    }
+
     @Bean(name = CONNECTION_FACTORY_BEAN_CONFIGURER)
-    @ConditionalOnBean(name = CONNECTION_FACTORY_BEAN_CONFIGURER)
+    @ConditionalOnBean(name = RABBIT_PROPERTIES)
     @ConditionalOnMissingBean(name = CONNECTION_FACTORY_BEAN_CONFIGURER)
     public RabbitConnectionFactoryBeanConfigurer rabbitConnectionFactoryBeanConfigurer(@Qualifier(value = RABBIT_PROPERTIES) @NonNull MultipleRabbitProperties properties, @NonNull ResourceLoader loader,
-        @Autowired(required = false) @Qualifier(value = CREDENTIALS_PROVIDER) @Nullable CredentialsProvider credentialsProvider,
-        @Autowired(required = false) @Qualifier(value = CREDENTIALS_REFRESH_SERVICE) @Nullable CredentialsRefreshService refreshService) {
-        return RabbitConfigurationUtils.rabbitConnectionFactoryBeanConfigurer(properties, loader, credentialsProvider, refreshService);
+        @Autowired(required = false) @Qualifier(value = CONNECTION_DETAILS) @Nullable RabbitConnectionDetails details,
+        @Autowired(required = false) @Qualifier(value = CREDENTIALS_PROVIDER) @Nullable CredentialsProvider credentials,
+        @Autowired(required = false) @Qualifier(value = CREDENTIALS_REFRESH_SERVICE) @Nullable CredentialsRefreshService refresh,
+        @Autowired(required = false) @Qualifier(value = SSL_BUNDLES) @Nullable SslBundles bundles) {
+        return RabbitConfigurationUtils.rabbitConnectionFactoryBeanConfigurer(properties, loader, details, credentials, refresh, bundles);
     }
 
     @Bean(name = CACHING_CONNECTION_FACTORY_CONFIGURER)
-    @ConditionalOnBean(name = CACHING_CONNECTION_FACTORY_CONFIGURER)
+    @ConditionalOnBean(name = RABBIT_PROPERTIES)
     @ConditionalOnMissingBean(name = CACHING_CONNECTION_FACTORY_CONFIGURER)
     public CachingConnectionFactoryConfigurer cachingConnectionFactoryConfigurer(@Qualifier(value = RABBIT_PROPERTIES) @NonNull MultipleRabbitProperties properties,
+        @Autowired(required = false) @Qualifier(value = CONNECTION_DETAILS) @Nullable RabbitConnectionDetails details,
         @Autowired(required = false) @Qualifier(value = CONNECTION_NAME_STRATEGY) @Nullable ConnectionNameStrategy strategy) {
-        return RabbitConfigurationUtils.cachingConnectionFactoryConfigurer(properties, strategy);
+        return RabbitConfigurationUtils.cachingConnectionFactoryConfigurer(properties, details, strategy);
     }
 
     @Bean(name = CONNECTION_FACTORY)
     @ConditionalOnBean(name = RABBIT_PROPERTIES)
     @ConditionalOnMissingBean(name = CONNECTION_FACTORY)
-    public CachingConnectionFactory cachingConnectionFactory(@Qualifier(value = CONNECTION_FACTORY_BEAN_CONFIGURER) @NonNull RabbitConnectionFactoryBeanConfigurer rabbitFactoryConfigurer,
-        @Qualifier(value = CACHING_CONNECTION_FACTORY_CONFIGURER) @NonNull CachingConnectionFactoryConfigurer cachingFactoryConfigurer,
+    public CachingConnectionFactory cachingConnectionFactory(@Qualifier(value = RABBIT_PROPERTIES) @NonNull MultipleRabbitProperties properties,
+        @Qualifier(value = CONNECTION_FACTORY_BEAN_CONFIGURER) @NonNull RabbitConnectionFactoryBeanConfigurer rabbitConfigurer,
+        @Qualifier(value = CACHING_CONNECTION_FACTORY_CONFIGURER) @NonNull CachingConnectionFactoryConfigurer cachingConfigurer,
         @Autowired(required = false) @Qualifier(value = CONNECTION_FACTORY_CUSTOMIZER) @Nullable ConnectionFactoryCustomizer customizer) throws Exception {
-        return RabbitConfigurationUtils.cachingConnectionFactory(rabbitFactoryConfigurer, cachingFactoryConfigurer, customizer);
+        return RabbitConfigurationUtils.cachingConnectionFactory(properties, rabbitConfigurer, cachingConfigurer, customizer);
     }
 
     @Bean(name = RABBIT_TEMPLATE_CONFIGURER)
@@ -133,8 +150,10 @@ public class SecondaryRabbitAutoConfiguration {
     @Bean(name = RABBIT_TEMPLATE)
     @ConditionalOnBean(name = {RABBIT_TEMPLATE_CONFIGURER, CONNECTION_FACTORY})
     @ConditionalOnMissingBean(name = RABBIT_TEMPLATE)
-    public RabbitTemplate rabbitTemplate(@Qualifier(value = RABBIT_TEMPLATE_CONFIGURER) @NonNull RabbitTemplateConfigurer configurer, @Qualifier(value = CONNECTION_FACTORY) @NonNull ConnectionFactory factory) {
-        return RabbitConfigurationUtils.rabbitTemplate(configurer, factory);
+    public RabbitTemplate rabbitTemplate(@Qualifier(value = RABBIT_TEMPLATE_CONFIGURER) @NonNull RabbitTemplateConfigurer configurer,
+        @Qualifier(value = CONNECTION_FACTORY) @NonNull ConnectionFactory factory,
+        @Autowired(required = false) @Qualifier(value = RABBIT_TEMPLATE_CUSTOMIZER) @NonNull RabbitTemplateCustomizer customizer) {
+        return RabbitConfigurationUtils.rabbitTemplate(configurer, factory, customizer);
     }
 
     @Bean(name = RABBIT_MESSAGING_TEMPLATE)

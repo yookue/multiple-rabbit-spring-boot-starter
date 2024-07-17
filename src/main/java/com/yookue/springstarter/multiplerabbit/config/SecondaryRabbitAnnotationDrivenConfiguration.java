@@ -17,7 +17,7 @@
 package com.yookue.springstarter.multiplerabbit.config;
 
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.config.DirectRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;

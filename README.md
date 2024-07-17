@@ -61,7 +61,7 @@ rabbitmq-plugins enable rabbitmq_delayed_message_exchange
 
 ## Requirement
 
-- jdk 1.8+
+- jdk 17+
 
 ## License
 
