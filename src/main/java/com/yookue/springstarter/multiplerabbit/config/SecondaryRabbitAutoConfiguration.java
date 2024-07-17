@@ -96,7 +96,7 @@ public class SecondaryRabbitAutoConfiguration {
     }
 
     @Bean(name = CONNECTION_FACTORY_BEAN_CONFIGURER)
-    @ConditionalOnBean(name = CONNECTION_FACTORY_BEAN_CONFIGURER)
+    @ConditionalOnBean(name = RABBIT_PROPERTIES)
     @ConditionalOnMissingBean(name = CONNECTION_FACTORY_BEAN_CONFIGURER)
     public RabbitConnectionFactoryBeanConfigurer rabbitConnectionFactoryBeanConfigurer(@Qualifier(value = RABBIT_PROPERTIES) @NonNull MultipleRabbitProperties properties, @NonNull ResourceLoader loader,
         @Autowired(required = false) @Qualifier(value = CREDENTIALS_PROVIDER) @Nullable CredentialsProvider credentialsProvider,
@@ -105,7 +105,7 @@ public class SecondaryRabbitAutoConfiguration {
     }
 
     @Bean(name = CACHING_CONNECTION_FACTORY_CONFIGURER)
-    @ConditionalOnBean(name = CACHING_CONNECTION_FACTORY_CONFIGURER)
+    @ConditionalOnBean(name = RABBIT_PROPERTIES)
     @ConditionalOnMissingBean(name = CACHING_CONNECTION_FACTORY_CONFIGURER)
     public CachingConnectionFactoryConfigurer cachingConnectionFactoryConfigurer(@Qualifier(value = RABBIT_PROPERTIES) @NonNull MultipleRabbitProperties properties,
         @Autowired(required = false) @Qualifier(value = CONNECTION_NAME_STRATEGY) @Nullable ConnectionNameStrategy strategy) {
@@ -133,7 +133,8 @@ public class SecondaryRabbitAutoConfiguration {
     @Bean(name = RABBIT_TEMPLATE)
     @ConditionalOnBean(name = {RABBIT_TEMPLATE_CONFIGURER, CONNECTION_FACTORY})
     @ConditionalOnMissingBean(name = RABBIT_TEMPLATE)
-    public RabbitTemplate rabbitTemplate(@Qualifier(value = RABBIT_TEMPLATE_CONFIGURER) @NonNull RabbitTemplateConfigurer configurer, @Qualifier(value = CONNECTION_FACTORY) @NonNull ConnectionFactory factory) {
+    public RabbitTemplate rabbitTemplate(@Qualifier(value = RABBIT_TEMPLATE_CONFIGURER) @NonNull RabbitTemplateConfigurer configurer,
+        @Qualifier(value = CONNECTION_FACTORY) @NonNull ConnectionFactory factory) {
         return RabbitConfigurationUtils.rabbitTemplate(configurer, factory);
     }
 
