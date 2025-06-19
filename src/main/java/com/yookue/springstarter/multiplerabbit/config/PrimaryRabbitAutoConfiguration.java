@@ -108,8 +108,8 @@ public class PrimaryRabbitAutoConfiguration {
     @Bean(name = CONNECTION_DETAILS)
     @ConditionalOnBean(name = RABBIT_PROPERTIES)
     @ConditionalOnMissingBean(name = CONNECTION_DETAILS)
-    public RabbitConnectionDetails rabbitConnectionDetails(@Qualifier(value = RABBIT_PROPERTIES) @NonNull MultipleRabbitProperties properties) {
-        return RabbitConfigurationUtils.rabbitConnectionDetails(properties);
+    public RabbitConnectionDetails rabbitConnectionDetails(@Qualifier(value = RABBIT_PROPERTIES) @NonNull MultipleRabbitProperties properties, @Autowired(required = false) @Qualifier(value = SSL_BUNDLES) @Nullable SslBundles bundles) {
+        return RabbitConfigurationUtils.rabbitConnectionDetails(properties, bundles);
     }
 
     @Primary
@@ -130,8 +130,9 @@ public class PrimaryRabbitAutoConfiguration {
     @ConditionalOnMissingBean(name = CACHING_CONNECTION_FACTORY_CONFIGURER)
     public CachingConnectionFactoryConfigurer cachingConnectionFactoryConfigurer(@Qualifier(value = RABBIT_PROPERTIES) @NonNull MultipleRabbitProperties properties,
         @Autowired(required = false) @Qualifier(value = CONNECTION_DETAILS) @Nullable RabbitConnectionDetails details,
-        @Autowired(required = false) @Qualifier(value = CONNECTION_NAME_STRATEGY) @Nullable ConnectionNameStrategy strategy) {
-        return RabbitConfigurationUtils.cachingConnectionFactoryConfigurer(properties, details, strategy);
+        @Autowired(required = false) @Qualifier(value = CONNECTION_NAME_STRATEGY) @Nullable ConnectionNameStrategy strategy,
+        @Autowired(required = false) @Qualifier(value = SSL_BUNDLES) @Nullable SslBundles bundles) {
+        return RabbitConfigurationUtils.cachingConnectionFactoryConfigurer(properties, details, strategy, bundles);
     }
 
     @Primary

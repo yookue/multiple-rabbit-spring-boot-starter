@@ -47,19 +47,19 @@ import lombok.NonNull;
 @SuppressWarnings({"unused", "BooleanMethodIsAlwaysInverted", "UnusedReturnValue"})
 public abstract class RabbitConfigurationUtils extends RabbitAutoConfiguration {
     @Nonnull
-    public static RabbitConnectionDetails rabbitConnectionDetails(@NonNull RabbitProperties properties) {
-        return new PropertiesRabbitConnectionDetails(properties);
+    public static RabbitConnectionDetails rabbitConnectionDetails(@NonNull RabbitProperties properties, @Nullable SslBundles bundles) {
+        return new PropertiesRabbitConnectionDetails(properties, bundles);
     }
 
     @Nonnull
     public static RabbitConnectionFactoryBeanConfigurer rabbitConnectionFactoryBeanConfigurer(@NonNull RabbitProperties properties, @NonNull ResourceLoader loader, @Nullable RabbitConnectionDetails details, @Nullable CredentialsProvider credentials, @Nullable CredentialsRefreshService refresh, @Nullable SslBundles bundles) {
-        RabbitConnectionDetails alias = ObjectUtils.defaultIfNull(details, rabbitConnectionDetails(properties));
-        return new RabbitConnectionFactoryCreator(properties).rabbitConnectionFactoryBeanConfigurer(loader, alias, SingletonObjectProvider.ofNullable(credentials), SingletonObjectProvider.ofNullable(refresh), SingletonObjectProvider.ofNullable(bundles));
+        RabbitConnectionDetails alias = ObjectUtils.defaultIfNull(details, rabbitConnectionDetails(properties, bundles));
+        return new RabbitConnectionFactoryCreator(properties).rabbitConnectionFactoryBeanConfigurer(loader, alias, SingletonObjectProvider.ofNullable(credentials), SingletonObjectProvider.ofNullable(refresh));
     }
 
     @Nonnull
-    public static CachingConnectionFactoryConfigurer cachingConnectionFactoryConfigurer(@NonNull RabbitProperties properties, @Nullable RabbitConnectionDetails details, @Nullable ConnectionNameStrategy strategy) {
-        RabbitConnectionDetails alias = ObjectUtils.defaultIfNull(details, rabbitConnectionDetails(properties));
+    public static CachingConnectionFactoryConfigurer cachingConnectionFactoryConfigurer(@NonNull RabbitProperties properties, @Nullable RabbitConnectionDetails details, @Nullable ConnectionNameStrategy strategy, @Nullable SslBundles bundles) {
+        RabbitConnectionDetails alias = ObjectUtils.defaultIfNull(details, rabbitConnectionDetails(properties, bundles));
         return new RabbitConnectionFactoryCreator(properties).rabbitConnectionFactoryConfigurer(alias, SingletonObjectProvider.ofNullable(strategy));
     }
 
