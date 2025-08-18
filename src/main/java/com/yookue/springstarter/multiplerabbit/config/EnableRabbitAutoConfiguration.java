@@ -21,6 +21,7 @@ import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -38,7 +39,7 @@ import com.yookue.commonplexus.springcondition.annotation.ConditionalOnAnyProper
  * @see org.springframework.amqp.rabbit.annotation.RabbitBootstrapConfiguration
  */
 @Configuration(proxyBeanMethods = false)
-@ConditionalOnProperty(prefix = "spring.multiple-rabbit", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnBooleanProperty(prefix = "spring.multiple-rabbit", name = "enabled", matchIfMissing = true)
 @ConditionalOnAnyProperties(value = {
     @ConditionalOnProperty(prefix = PrimaryRabbitAutoConfiguration.PROPERTIES_PREFIX, name = "host"),
     @ConditionalOnProperty(prefix = SecondaryRabbitAutoConfiguration.PROPERTIES_PREFIX, name = "host"),

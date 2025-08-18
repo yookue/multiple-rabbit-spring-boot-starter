@@ -35,12 +35,12 @@ import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
 import org.springframework.boot.autoconfigure.amqp.RabbitRetryTemplateCustomizer;
 import org.springframework.boot.autoconfigure.amqp.SimpleRabbitListenerContainerFactoryConfigurer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import com.yookue.commonplexus.springcondition.annotation.ConditionalOnAllProperties;
 import lombok.NonNull;
 
 
@@ -50,10 +50,8 @@ import lombok.NonNull;
  * @author David Hsing
  */
 @Configuration(proxyBeanMethods = false)
-@ConditionalOnAllProperties(value = {
-    @ConditionalOnProperty(prefix = "spring.multiple-rabbit", name = "enabled", havingValue = "true", matchIfMissing = true),
-    @ConditionalOnProperty(prefix = TertiaryRabbitAutoConfiguration.PROPERTIES_PREFIX, name = "host")
-})
+@ConditionalOnBooleanProperty(prefix = "spring.multiple-rabbit", name = "enabled", matchIfMissing = true)
+@ConditionalOnProperty(prefix = TertiaryRabbitAutoConfiguration.PROPERTIES_PREFIX, name = "host")
 @ConditionalOnClass(value = EnableRabbit.class)
 @AutoConfigureAfter(value = {SecondaryRabbitAnnotationDrivenConfiguration.class, TertiaryRabbitAutoConfiguration.class})
 @AutoConfigureBefore(value = RabbitAutoConfiguration.class)

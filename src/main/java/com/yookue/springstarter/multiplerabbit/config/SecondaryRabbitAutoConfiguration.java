@@ -43,6 +43,7 @@ import org.springframework.boot.autoconfigure.amqp.RabbitRetryTemplateCustomizer
 import org.springframework.boot.autoconfigure.amqp.RabbitTemplateConfigurer;
 import org.springframework.boot.autoconfigure.amqp.RabbitTemplateCustomizer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -54,7 +55,6 @@ import org.springframework.core.io.ResourceLoader;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.impl.CredentialsProvider;
 import com.rabbitmq.client.impl.CredentialsRefreshService;
-import com.yookue.commonplexus.springcondition.annotation.ConditionalOnAllProperties;
 import com.yookue.springstarter.multiplerabbit.property.MultipleRabbitProperties;
 import com.yookue.springstarter.multiplerabbit.util.CustomExchangeUtils;
 import lombok.NonNull;
@@ -66,10 +66,8 @@ import lombok.NonNull;
  * @author David Hsing
  */
 @Configuration(proxyBeanMethods = false)
-@ConditionalOnAllProperties(value = {
-    @ConditionalOnProperty(prefix = "spring.multiple-rabbit", name = "enabled", havingValue = "true", matchIfMissing = true),
-    @ConditionalOnProperty(prefix = SecondaryRabbitAutoConfiguration.PROPERTIES_PREFIX, name = "host")
-})
+@ConditionalOnBooleanProperty(prefix = "spring.multiple-rabbit", name = "enabled", matchIfMissing = true)
+@ConditionalOnProperty(prefix = SecondaryRabbitAutoConfiguration.PROPERTIES_PREFIX, name = "host")
 @ConditionalOnClass(value = {RabbitTemplate.class, Channel.class})
 @AutoConfigureAfter(value = PrimaryRabbitAutoConfiguration.class)
 @AutoConfigureBefore(value = RabbitAutoConfiguration.class)
@@ -173,10 +171,8 @@ public class SecondaryRabbitAutoConfiguration {
     }
 
     @Bean(name = DELAYED_EXCHANGE)
-    @ConditionalOnAllProperties(value = {
-        @ConditionalOnProperty(prefix = PROPERTIES_PREFIX + ".delayed-exchange", name = "enabled", havingValue = "true", matchIfMissing = true),
-        @ConditionalOnProperty(prefix = PROPERTIES_PREFIX + ".delayed-exchange", name = "name")
-    })
+    @ConditionalOnBooleanProperty(prefix = PROPERTIES_PREFIX + ".delayed-exchange", name = "enabled", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = PROPERTIES_PREFIX + ".delayed-exchange", name = "name")
     @ConditionalOnBean(name = AMQP_ADMIN)
     @ConditionalOnMissingBean(name = DELAYED_EXCHANGE)
     public CustomExchange delayedExchange(@Qualifier(value = AMQP_ADMIN) @Nonnull AmqpAdmin amqpAdmin, @Qualifier(value = RABBIT_PROPERTIES) @NonNull MultipleRabbitProperties properties) {
