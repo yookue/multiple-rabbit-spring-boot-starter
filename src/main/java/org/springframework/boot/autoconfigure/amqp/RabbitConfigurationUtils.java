@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Yookue Ltd. All rights reserved.
+ * Copyright (c) 2020 Unikue Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ import org.springframework.boot.ssl.SslBundles;
 import org.springframework.core.io.ResourceLoader;
 import com.rabbitmq.client.impl.CredentialsProvider;
 import com.rabbitmq.client.impl.CredentialsRefreshService;
-import com.yookue.commonplexus.springutil.support.SingletonObjectProvider;
+import cn.unikue.commonplexus.springutil.support.SingletonObjectProvider;
 import lombok.NonNull;
 
 

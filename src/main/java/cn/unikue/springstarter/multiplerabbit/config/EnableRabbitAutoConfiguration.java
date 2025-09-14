@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Yookue Ltd. All rights reserved.
+ * Copyright (c) 2020 Unikue Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.yookue.springstarter.multiplerabbit.config;
+package cn.unikue.springstarter.multiplerabbit.config;
 
 
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
@@ -27,7 +27,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import com.rabbitmq.client.Channel;
-import com.yookue.commonplexus.springcondition.annotation.ConditionalOnAnyProperties;
+import cn.unikue.commonplexus.springcondition.annotation.ConditionalOnAnyProperties;
 
 
 /**

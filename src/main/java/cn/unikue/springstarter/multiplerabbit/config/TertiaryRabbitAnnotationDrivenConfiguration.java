@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Yookue Ltd. All rights reserved.
+ * Copyright (c) 2020 Unikue Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.yookue.springstarter.multiplerabbit.config;
+package cn.unikue.springstarter.multiplerabbit.config;
 
 
 import jakarta.annotation.Nullable;
@@ -45,65 +45,65 @@ import lombok.NonNull;
 
 
 /**
- * Secondary configuration for annotation driven rabbit
+ * Tertiary configuration for annotation driven rabbit
  *
  * @author David Hsing
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnBooleanProperty(prefix = "spring.multiple-rabbit", name = "enabled", matchIfMissing = true)
-@ConditionalOnProperty(prefix = SecondaryRabbitAutoConfiguration.PROPERTIES_PREFIX, name = "host")
+@ConditionalOnProperty(prefix = TertiaryRabbitAutoConfiguration.PROPERTIES_PREFIX, name = "host")
 @ConditionalOnClass(value = EnableRabbit.class)
-@AutoConfigureAfter(value = {PrimaryRabbitAnnotationDrivenConfiguration.class, SecondaryRabbitAutoConfiguration.class})
+@AutoConfigureAfter(value = {SecondaryRabbitAnnotationDrivenConfiguration.class, TertiaryRabbitAutoConfiguration.class})
 @AutoConfigureBefore(value = RabbitAutoConfiguration.class)
-public class SecondaryRabbitAnnotationDrivenConfiguration {
-    public static final String MESSAGE_RECOVERER = "secondaryRabbitMessageRecoverer";    // $NON-NLS-1$
-    public static final String SIMPLE_CONTAINER_FACTORY_CONFIGURER = "secondaryRabbitSimpleListenerContainerFactoryConfigurer";    // $NON-NLS-1$
-    public static final String DIRECT_CONTAINER_FACTORY_CONFIGURER = "secondaryRabbitDirectListenerContainerFactoryConfigurer";    // $NON-NLS-1$
-    public static final String CONTAINER_FACTORY = "secondaryRabbitListenerContainerFactory";    // $NON-NLS-1$
+public class TertiaryRabbitAnnotationDrivenConfiguration {
+    public static final String MESSAGE_RECOVERER = "tertiaryRabbitMessageRecoverer";    // $NON-NLS-1$
+    public static final String SIMPLE_CONTAINER_FACTORY_CONFIGURER = "tertiaryRabbitSimpleListenerContainerFactoryConfigurer";    // $NON-NLS-1$
+    public static final String DIRECT_CONTAINER_FACTORY_CONFIGURER = "tertiaryRabbitDirectListenerContainerFactoryConfigurer";    // $NON-NLS-1$
+    public static final String CONTAINER_FACTORY = "tertiaryRabbitListenerContainerFactory";    // $NON-NLS-1$
 
     @Bean(name = SIMPLE_CONTAINER_FACTORY_CONFIGURER)
-    @ConditionalOnProperty(prefix = SecondaryRabbitAutoConfiguration.PROPERTIES_PREFIX, name = "listener.type", havingValue = "simple", matchIfMissing = true)
-    @ConditionalOnBean(name = SecondaryRabbitAutoConfiguration.RABBIT_PROPERTIES, value = RabbitProperties.class)
+    @ConditionalOnProperty(prefix = TertiaryRabbitAutoConfiguration.PROPERTIES_PREFIX, name = "listener.type", havingValue = "simple", matchIfMissing = true)
+    @ConditionalOnBean(name = TertiaryRabbitAutoConfiguration.RABBIT_PROPERTIES, value = RabbitProperties.class)
     @ConditionalOnMissingBean(name = SIMPLE_CONTAINER_FACTORY_CONFIGURER)
     public SimpleRabbitListenerContainerFactoryConfigurer simpleRabbitListenerContainerFactoryConfigurer(
-        @Qualifier(value = SecondaryRabbitAutoConfiguration.RABBIT_PROPERTIES) @NonNull RabbitProperties properties,
-        @Autowired(required = false) @Qualifier(value = SecondaryRabbitAutoConfiguration.MESSAGE_CONVERTER) @Nullable MessageConverter converter,
+        @Qualifier(value = TertiaryRabbitAutoConfiguration.RABBIT_PROPERTIES) @NonNull RabbitProperties properties,
+        @Autowired(required = false) @Qualifier(value = TertiaryRabbitAutoConfiguration.MESSAGE_CONVERTER) @Nullable MessageConverter converter,
         @Autowired(required = false) @Qualifier(value = MESSAGE_RECOVERER) @Nullable MessageRecoverer recoverer,
-        @Autowired(required = false) @Qualifier(value = SecondaryRabbitAutoConfiguration.RETRY_TEMPLATE_CUSTOMIZER) @Nullable RabbitRetryTemplateCustomizer customizer) {
+        @Autowired(required = false) @Qualifier(value = TertiaryRabbitAutoConfiguration.RETRY_TEMPLATE_CUSTOMIZER) @Nullable RabbitRetryTemplateCustomizer customizer) {
         return RabbitConfigurationUtils.simpleRabbitListenerContainerFactoryConfigurer(properties, converter, recoverer, customizer);
     }
 
     @Bean(name = CONTAINER_FACTORY)
-    @ConditionalOnProperty(prefix = SecondaryRabbitAutoConfiguration.PROPERTIES_PREFIX, name = "listener.type", havingValue = "simple", matchIfMissing = true)
-    @ConditionalOnBean(name = {SIMPLE_CONTAINER_FACTORY_CONFIGURER, SecondaryRabbitAutoConfiguration.CONNECTION_FACTORY})
+    @ConditionalOnProperty(prefix = TertiaryRabbitAutoConfiguration.PROPERTIES_PREFIX, name = "listener.type", havingValue = "simple", matchIfMissing = true)
+    @ConditionalOnBean(name = {SIMPLE_CONTAINER_FACTORY_CONFIGURER, TertiaryRabbitAutoConfiguration.CONNECTION_FACTORY})
     @ConditionalOnMissingBean(name = CONTAINER_FACTORY)
     public SimpleRabbitListenerContainerFactory simpleRabbitListenerContainerFactory(
         @Qualifier(value = SIMPLE_CONTAINER_FACTORY_CONFIGURER) @NonNull SimpleRabbitListenerContainerFactoryConfigurer configurer,
-        @Qualifier(value = SecondaryRabbitAutoConfiguration.CONNECTION_FACTORY) @NonNull ConnectionFactory factory) {
+        @Qualifier(value = TertiaryRabbitAutoConfiguration.CONNECTION_FACTORY) @NonNull ConnectionFactory factory) {
         SimpleRabbitListenerContainerFactory containerFactory = new SimpleRabbitListenerContainerFactory();
         configurer.configure(containerFactory, factory);
         return containerFactory;
     }
 
     @Bean(name = DIRECT_CONTAINER_FACTORY_CONFIGURER)
-    @ConditionalOnProperty(prefix = SecondaryRabbitAutoConfiguration.PROPERTIES_PREFIX, name = "listener.type", havingValue = "direct")
-    @ConditionalOnBean(name = SecondaryRabbitAutoConfiguration.RABBIT_PROPERTIES, value = RabbitProperties.class)
+    @ConditionalOnProperty(prefix = TertiaryRabbitAutoConfiguration.PROPERTIES_PREFIX, name = "listener.type", havingValue = "direct")
+    @ConditionalOnBean(name = TertiaryRabbitAutoConfiguration.RABBIT_PROPERTIES, value = RabbitProperties.class)
     @ConditionalOnMissingBean(name = DIRECT_CONTAINER_FACTORY_CONFIGURER)
     public DirectRabbitListenerContainerFactoryConfigurer directRabbitListenerContainerFactoryConfigurer(
-        @Qualifier(value = SecondaryRabbitAutoConfiguration.RABBIT_PROPERTIES) @NonNull RabbitProperties properties,
-        @Autowired(required = false) @Qualifier(value = SecondaryRabbitAutoConfiguration.MESSAGE_CONVERTER) @Nullable MessageConverter converter,
+        @Qualifier(value = TertiaryRabbitAutoConfiguration.RABBIT_PROPERTIES) @NonNull RabbitProperties properties,
+        @Autowired(required = false) @Qualifier(value = TertiaryRabbitAutoConfiguration.MESSAGE_CONVERTER) @Nullable MessageConverter converter,
         @Autowired(required = false) @Qualifier(value = MESSAGE_RECOVERER) @Nullable MessageRecoverer recoverer,
-        @Autowired(required = false) @Qualifier(value = SecondaryRabbitAutoConfiguration.RETRY_TEMPLATE_CUSTOMIZER) @Nullable RabbitRetryTemplateCustomizer customizer) {
+        @Autowired(required = false) @Qualifier(value = TertiaryRabbitAutoConfiguration.RETRY_TEMPLATE_CUSTOMIZER) @Nullable RabbitRetryTemplateCustomizer customizer) {
         return RabbitConfigurationUtils.directRabbitListenerContainerFactoryConfigurer(properties, converter, recoverer, customizer);
     }
 
     @Bean(name = CONTAINER_FACTORY)
-    @ConditionalOnProperty(prefix = SecondaryRabbitAutoConfiguration.PROPERTIES_PREFIX, name = "listener.type", havingValue = "direct")
-    @ConditionalOnBean(name = {DIRECT_CONTAINER_FACTORY_CONFIGURER, SecondaryRabbitAutoConfiguration.CONNECTION_FACTORY})
+    @ConditionalOnProperty(prefix = TertiaryRabbitAutoConfiguration.PROPERTIES_PREFIX, name = "listener.type", havingValue = "direct")
+    @ConditionalOnBean(name = {DIRECT_CONTAINER_FACTORY_CONFIGURER, TertiaryRabbitAutoConfiguration.CONNECTION_FACTORY})
     @ConditionalOnMissingBean(name = CONTAINER_FACTORY)
     public DirectRabbitListenerContainerFactory directRabbitListenerContainerFactory(
         @Qualifier(value = DIRECT_CONTAINER_FACTORY_CONFIGURER) @NonNull DirectRabbitListenerContainerFactoryConfigurer configurer,
-        @Qualifier(value = SecondaryRabbitAutoConfiguration.CONNECTION_FACTORY) @NonNull ConnectionFactory factory) {
+        @Qualifier(value = TertiaryRabbitAutoConfiguration.CONNECTION_FACTORY) @NonNull ConnectionFactory factory) {
         DirectRabbitListenerContainerFactory containerFactory = new DirectRabbitListenerContainerFactory();
         configurer.configure(containerFactory, factory);
         return containerFactory;

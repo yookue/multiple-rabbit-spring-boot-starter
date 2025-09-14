@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Yookue Ltd. All rights reserved.
+ * Copyright (c) 2020 Unikue Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,27 +14,16 @@
  * limitations under the License.
  */
 
-package com.yookue.springstarter.multiplerabbit.enumeration;
-
-
-import com.yookue.commonplexus.javaseutil.enumeration.ValueEnum;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+package cn.unikue.springstarter.multiplerabbit.constant;
 
 
 /**
- * Enumerations for rabbit exchange types
+ * Constants for {@link org.springframework.amqp.core.CustomExchange}
  *
  * @author David Hsing
+ * @see org.springframework.amqp.core.CustomExchange
  */
-@AllArgsConstructor
-@Getter
-@SuppressWarnings("unused")
-public enum RabbitExchangeType implements ValueEnum<String> {
-    DIRECT("direct"),    // $NON-NLS-1$
-    FANOUT("fanout"),    // $NON-NLS-1$
-    HEADERS("headers"),    // $NON-NLS-1$
-    TOPIC("topic");    // $NON-NLS-1$
-
-    private final String value;
+public abstract class CustomExchangeConst {
+    public static final String X_DELAYED_MESSAGE = "x-delayed-message";    // $NON-NLS-1$
+    public static final String X_DELAYED_TYPE = "x-delayed-type";    // $NON-NLS-1$
 }

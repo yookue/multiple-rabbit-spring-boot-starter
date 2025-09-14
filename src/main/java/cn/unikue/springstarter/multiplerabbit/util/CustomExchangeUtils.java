@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Yookue Ltd. All rights reserved.
+ * Copyright (c) 2020 Unikue Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.yookue.springstarter.multiplerabbit.util;
+package cn.unikue.springstarter.multiplerabbit.util;
 
 
 import java.util.LinkedHashMap;
@@ -24,8 +24,8 @@ import jakarta.annotation.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.CustomExchange;
-import com.yookue.springstarter.multiplerabbit.constant.CustomExchangeConst;
-import com.yookue.springstarter.multiplerabbit.enumeration.RabbitExchangeType;
+import cn.unikue.springstarter.multiplerabbit.constant.CustomExchangeConst;
+import cn.unikue.springstarter.multiplerabbit.enumeration.RabbitExchangeType;
 
 
 /**

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Yookue Ltd. All rights reserved.
+ * Copyright (c) 2020 Unikue Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.yookue.springstarter.multiplerabbit.config;
+package cn.unikue.springstarter.multiplerabbit.config;
 
 
 import jakarta.annotation.Nonnull;
@@ -55,42 +55,42 @@ import org.springframework.core.io.ResourceLoader;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.impl.CredentialsProvider;
 import com.rabbitmq.client.impl.CredentialsRefreshService;
-import com.yookue.springstarter.multiplerabbit.property.MultipleRabbitProperties;
-import com.yookue.springstarter.multiplerabbit.util.CustomExchangeUtils;
+import cn.unikue.springstarter.multiplerabbit.property.MultipleRabbitProperties;
+import cn.unikue.springstarter.multiplerabbit.util.CustomExchangeUtils;
 import lombok.NonNull;
 
 
 /**
- * Tertiary configuration for rabbit
+ * Secondary configuration for rabbit
  *
  * @author David Hsing
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnBooleanProperty(prefix = "spring.multiple-rabbit", name = "enabled", matchIfMissing = true)
-@ConditionalOnProperty(prefix = TertiaryRabbitAutoConfiguration.PROPERTIES_PREFIX, name = "host")
+@ConditionalOnProperty(prefix = SecondaryRabbitAutoConfiguration.PROPERTIES_PREFIX, name = "host")
 @ConditionalOnClass(value = {RabbitTemplate.class, Channel.class})
-@AutoConfigureAfter(value = SecondaryRabbitAutoConfiguration.class)
+@AutoConfigureAfter(value = PrimaryRabbitAutoConfiguration.class)
 @AutoConfigureBefore(value = RabbitAutoConfiguration.class)
-public class TertiaryRabbitAutoConfiguration {
-    public static final String PROPERTIES_PREFIX = "spring.multiple-rabbit.tertiary";    // $NON-NLS-1$
-    public static final String RABBIT_PROPERTIES = "tertiaryRabbitProperties";    // $NON-NLS-1$
-    public static final String CONNECTION_DETAILS = "tertiaryRabbitConnectionDetails";    // $NON-NLS-1$
-    public static final String CREDENTIALS_PROVIDER = "tertiaryRabbitCredentialsProvider";    // $NON-NLS-1$
-    public static final String CREDENTIALS_REFRESH_SERVICE = "tertiaryRabbitCredentialsRefreshService";    // $NON-NLS-1$   // $NON-NLS-1$
-    public static final String SSL_BUNDLES = "tertiaryRabbitSslBundles";    // $NON-NLS-1$
-    public static final String CONNECTION_FACTORY_BEAN_CONFIGURER = "tertiaryRabbitConnectionFactoryBeanConfigurer";
-    public static final String CONNECTION_NAME_STRATEGY = "tertiaryRabbitConnectionNameStrategy";    // $NON-NLS-1$
-    public static final String CACHING_CONNECTION_FACTORY_CONFIGURER = "tertiaryRabbitCachingConnectionFactoryConfigurer";    // $NON-NLS-1$
-    public static final String CONNECTION_FACTORY_CUSTOMIZER = "tertiaryRabbitConnectionFactoryCustomizer";    // $NON-NLS-1$
-    public static final String CONNECTION_FACTORY = "tertiaryRabbitConnectionFactory";    // $NON-NLS-1$
-    public static final String MESSAGE_CONVERTER = "tertiaryRabbitMessageConverter";    // $NON-NLS-1$
-    public static final String RETRY_TEMPLATE_CUSTOMIZER = "tertiaryRabbitRetryTemplateCustomizer";    // $NON-NLS-1$
-    public static final String RABBIT_TEMPLATE_CONFIGURER = "tertiaryRabbitTemplateConfigurer";    // $NON-NLS-1$
+public class SecondaryRabbitAutoConfiguration {
+    public static final String PROPERTIES_PREFIX = "spring.multiple-rabbit.secondary";    // $NON-NLS-1$
+    public static final String RABBIT_PROPERTIES = "secondaryRabbitProperties";    // $NON-NLS-1$
+    public static final String CONNECTION_DETAILS = "secondaryRabbitConnectionDetails";    // $NON-NLS-1$
+    public static final String CREDENTIALS_PROVIDER = "secondaryRabbitCredentialsProvider";    // $NON-NLS-1$
+    public static final String CREDENTIALS_REFRESH_SERVICE = "secondaryRabbitCredentialsRefreshService";    // $NON-NLS-1$   // $NON-NLS-1$
+    public static final String SSL_BUNDLES = "secondaryRabbitSslBundles";    // $NON-NLS-1$
+    public static final String CONNECTION_FACTORY_BEAN_CONFIGURER = "secondaryRabbitConnectionFactoryBeanConfigurer";
+    public static final String CONNECTION_NAME_STRATEGY = "secondaryRabbitConnectionNameStrategy";    // $NON-NLS-1$
+    public static final String CACHING_CONNECTION_FACTORY_CONFIGURER = "secondaryRabbitCachingConnectionFactoryConfigurer";    // $NON-NLS-1$
+    public static final String CONNECTION_FACTORY_CUSTOMIZER = "secondaryRabbitConnectionFactoryCustomizer";    // $NON-NLS-1$
+    public static final String CONNECTION_FACTORY = "secondaryRabbitConnectionFactory";    // $NON-NLS-1$
+    public static final String MESSAGE_CONVERTER = "secondaryRabbitMessageConverter";    // $NON-NLS-1$
+    public static final String RETRY_TEMPLATE_CUSTOMIZER = "secondaryRabbitRetryTemplateCustomizer";    // $NON-NLS-1$
+    public static final String RABBIT_TEMPLATE_CONFIGURER = "secondaryRabbitTemplateConfigurer";    // $NON-NLS-1$
     public static final String RABBIT_TEMPLATE_CUSTOMIZER = "primaryRabbitTemplateCustomizer";    // $NON-NLS-1$
-    public static final String RABBIT_TEMPLATE = "tertiaryRabbitTemplate";    // $NON-NLS-1$
-    public static final String RABBIT_MESSAGING_TEMPLATE = "tertiaryRabbitMessagingTemplate";    // $NON-NLS-1$
-    public static final String AMQP_ADMIN = "tertiaryRabbitAmqpAdmin";    // $NON-NLS-1$
-    public static final String DELAYED_EXCHANGE = "tertiaryRabbitDelayedExchange";    // $NON-NLS-1$
+    public static final String RABBIT_TEMPLATE = "secondaryRabbitTemplate";    // $NON-NLS-1$
+    public static final String RABBIT_MESSAGING_TEMPLATE = "secondaryRabbitMessagingTemplate";    // $NON-NLS-1$
+    public static final String AMQP_ADMIN = "secondaryRabbitAmqpAdmin";    // $NON-NLS-1$
+    public static final String DELAYED_EXCHANGE = "secondaryRabbitDelayedExchange";    // $NON-NLS-1$
 
     @Bean(name = RABBIT_PROPERTIES)
     @ConditionalOnMissingBean(name = RABBIT_PROPERTIES)

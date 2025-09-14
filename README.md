@@ -8,7 +8,7 @@ Spring Boot application integrates multiple `RabbitMQ` quickly.
 
 ```xml
     <dependency>
-        <groupId>com.yookue.springstarter</groupId>
+        <groupId>cn.unikue.springstarter</groupId>
         <artifactId>multiple-rabbit-spring-boot-starter</artifactId>
         <version>LATEST</version>
     </dependency>
@@ -55,7 +55,7 @@ rabbitmq-plugins enable rabbitmq_delayed_message_exchange
 
 ## Document
 
-- Github: https://github.com/yookue/multiple-rabbit-spring-boot-starter
+- Github: https://github.com/unikueltd/multiple-rabbit-spring-boot-starter
 - RabbitMQ github: https://github.com/rabbitmq/rabbitmq-java-client
 - RabbitMQ homepage: https://rabbitmq.com
 
@@ -71,12 +71,12 @@ See the `NOTICE.txt` file for required notices and attributions.
 
 ## Donation
 
-You like this package? Then [donate to us](https://yookue.com/donation) to support the development.
+You like this package? Then [donate to us](https://unikue.cn/donation) to support the development.
 
 ## Copyright
 
-Beijing Yookue Network Technology Ltd.
+Beijing Unikue Network Technology Ltd.
 
 ## Website
 
-- Yookue: https://yookue.com
+- Unikue: https://unikue.cn
